@@ -119,6 +119,16 @@ public class HttpTask extends WorkflowSystemTask {
 			logger.info("response {}, {}", response.statusCode, response.body);
 			if(response.statusCode > 199 && response.statusCode < 300) {
 				task.setStatus(Status.COMPLETED);
+				if (response.body != null) {
+					Map<String, Object> body = (Map<String, Object>) response.body;
+					if (body.containsKey("errors")) {
+						task.setStatus(Status.FAILED);
+					} else {
+						task.setStatus(Status.COMPLETED);
+					}
+				} else {
+					task.setStatus(Status.COMPLETED);
+				}
 			} else {
 				if(response.body != null) {
 					task.setReasonForIncompletion(response.body.toString());
