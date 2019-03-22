@@ -83,7 +83,7 @@ public class SystemTaskWorkerCoordinator {
 		this.unackTimeout = config.getIntProperty("workflow.system.task.worker.callback.seconds", 30);
 		int threadCount = config.getIntProperty("workflow.system.task.worker.thread.count", 10);
 		this.pollCount = config.getIntProperty("workflow.system.task.worker.poll.count", 10);
-		this.pollInterval = config.getIntProperty("workflow.system.task.worker.poll.interval", 50);
+		this.pollInterval = config.getIntProperty("workflow.system.task.worker.poll.interval", 25);
 		this.workerQueueSize = config.getIntProperty("workflow.system.task.worker.queue.size", 100);
 		this.workerQueue = new LinkedBlockingQueue<>(workerQueueSize);
 		if(threadCount > 0) {
@@ -139,7 +139,7 @@ public class SystemTaskWorkerCoordinator {
                 return;
 			}
 
-			List<String> polledTaskIds = queueDAO.pop(taskName, realPollCount, 200);
+			List<String> polledTaskIds = queueDAO.pop(taskName, realPollCount, 0);
 			Monitors.recordTaskPoll(taskName);
 			logger.debug("Polling for {}, got {} tasks", taskName, polledTaskIds.size());
 			for(String taskId : polledTaskIds) {

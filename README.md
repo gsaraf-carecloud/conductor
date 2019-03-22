@@ -11,6 +11,45 @@ Conductor is an _orchestration_ engine that runs in the cloud.
 [![Issues](https://img.shields.io/github/issues/Netflix/conductor.svg)](https://github.com/Netflix/conductor/issues)
 [![NetflixOSS Lifecycle](https://img.shields.io/osslifecycle/Netflix/conductor.svg)]()
 
+## Quick start
+
+To get started with conductor, after cloning this repository, change dynomite and elastic search properties in the following file:
+
+    docker/server/config/config.properties
+
+
+To look like this:
+
+    workflow.dynomite.cluster.hosts= dyno1:8102:us-east-1c
+
+    workflow.elasticsearch.url= es:9300
+
+Then start the services using docker:
+
+```bash
+cd docker
+docker-compose up
+```
+
+This will launch UI at http://localhost:5000/.
+
+Note: The server will load a sample kitchensink workflow definition by default.
+
+### Add workflow definitions
+
+Clone [conductor_metadata](https://github.com/CareCloud/conductor_metadata) and run:
+
+```bash
+python migration.py --delete
+```
+
+This will add the existing workflow definitions to your local instance.
+
+### Start api server
+
+Clone [conductor_api](https://github.com/CareCloud/conductor_api) and follow the README to get the API up and running.
+
+
 ## Builds
 Conductor builds are run on Travis CI [here](https://travis-ci.org/Netflix/conductor).
 
@@ -100,3 +139,11 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+## Troubleshooting
+
+### Bind for 0.0.0.0:8080 failed: port is already allocated
+
+If you get an error similar to this, make sure the port is not being used by executing `lsof -t -i:8080`.
+
+When nothing is running in that port but the error persists, make sure there are no services configured to listen on that port, like nginx.
