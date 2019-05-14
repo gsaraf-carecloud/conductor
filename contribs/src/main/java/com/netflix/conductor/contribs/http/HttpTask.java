@@ -123,6 +123,10 @@ public class HttpTask extends WorkflowSystemTask {
 				} else {
 					task.setStatus(Status.COMPLETED);
 				}
+				if (response.body instanceof Map) {
+					Map<String, Object> body = (Map<String, Object>) response.body;
+					task.setStatus(body.containsKey("errors") ? Status.FAILED : Status.COMPLETED);
+				}
 			} else {
 				if(response.body != null) {
 					task.setReasonForIncompletion(response.body.toString());
